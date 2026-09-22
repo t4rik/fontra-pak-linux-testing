@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>xyz.fontra.FontraPak</id>
+  <name>FontraPak</name>
+  <summary>Standalone desktop build of the Fontra font editor</summary>
+  <developer id="fontra.xyz">
+  <name>Fontra Project</name>
+  <url>https://fontra.xyz</url>
+  </developer>
+  <description>
+    <p>
+      FontraPak is a cross-platform desktop application bundling the open-source, browser-based Fontra font editor. Fontra is developed by Black[Foundry] and Just van Rossum with support from Google Fonts.
+    </p>
+    <p>
+      Fontra focuses on variable font technology and advanced workflows for large font projects such as CJK, offering deeper variable font integration than traditional editors. As a standalone package, FontraPak allows easy installation and use outside the browser, bringing the full editing environment to your desktop.
+    </p>
+  </description>
+  <url type="homepage">https://github.com/fontra/fontrapak</url>
+  <categories>
+    <category>Graphics</category>
+    <category>Development</category> 
+  </categories>
+  <launchable type="desktop-id">xyz.fontra.FontraPak.desktop</launchable>
+  <releases>
+    <release version="2026.9.0" date="2026-09-14"/>
+    <release version="2026.9.0" date="2026-09-14"/>
+    <release version="2026.8.0" date="2026-08-29"/>
+    <release version="2026.7.2" date="2026-07-23"/>
+    <release version="2026.7.1" date="2026-07-17"/>
+    <release version="2026.7.0" date="2026-07-10"/>
+    <release version="2026.6.5" date="2026-06-28"/>
+    <release version="2026.6.4" date="2026-06-26"/>
+    <release version="2026.6.3" date="2026-06-15"/>
+    <release version="2026.6.2" date="2026-06-11"/>
+    <release version="2026.6.1" date="2026-06-08"/>
+    <release version="2026.6.0" date="2026-06-07"/>
+    <release version="2026.5.1" date="2026-05-12"/>
+    <release version="2026.5.0" date="2026-05-06"/>
+    <release version="2026.4.4" date="2026-04-29"/>
+    <release version="2026.4.3" date="2026-04-15"/>
+    <release version="2026.4.2" date="2026-04-14"/>
+    <release version="2026.4.1" date="2026-04-08"/>
+    <release version="2026.4.0" date="2026-04-01"/>
+    <release version="2026.3.5" date="2026-03-24"/>
+    <release version="2026.3.4" date="2026-03-17"/>
+    <release version="2026.3.3" date="2026-03-12"/>
+    <release version="2026.3.2" date="2026-03-12"/>
+    <release version="2026.3.1" date="2026-03-06"/>
+    <release version="2026.3.0" date="2026-03-06"/>
+    <release version="2026.2.0" date="2026-02-24"/>
+    <release version="2026.2.0" date="2026-02-03"/>
+    <release version="2026.1.3" date="2026-01-30"/>
+    <release version="2026.1.3" date="2026-01-24"/>
+    <release version="2026.1.2" date="2026-01-15"/>
+    <release version="2026.1.1" date="2026-01-12"/>
+    <release version="2026.1.0" date="2026-01-11"/>
+    <release version="2025.12.6" date="2025-12-31"/>
+    <release version="2025.12.4" date="2025-12-23"/>
+    <release version="2025.12.4" date="2025-12-20"/>
+    <release version="2025.12.4" date="2025-12-20"/>
+    <release version="2025.12.3" date="2025-12-16"/>
+    <release version="2025.12.3" date="2025-12-16"/>
+    <release version="2025.12.3" date="2025-12-16"/>
+    <release version="2025.12.2" date="2025-12-13"/>
+    <release version="2025.12.2" date="2025-12-12"/>
+    <release version="2025.12.2" date="2025-12-11"/>
+    <release version="2025.12.2" date="2025-12-10"/>
+    <release version="2025.12.2" date="2025-12-09"/>
+    <release version="2025.12.2" date="2025-12-08"/>
+    <release version="2025.12.2" date="2025-12-07"/>
+    <release version="2025.12.2" date="2025-12-06"/>
+    <release version="2025.12.2" date="2025-12-05"/>
+    <release version="2025.12.0" date="2025-12-03"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+  <screenshots>
+   <screenshot type="default">
+   <image>https://fonts.atipra.in/fontrapak/screenshot1.png</image>
+   <caption>FontraPak main interface</caption>
+   </screenshot>
+  </screenshots>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+</component>
+
