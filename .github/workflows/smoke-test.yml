@@ -1,0 +1,63 @@
+name: Smoke test across distros
+
+on:
+  workflow_dispatch:
+    inputs:
+      fontra_pak_version:
+        description: 'fontra-pak release tag to test (e.g. 2026.9.0), or "latest"'
+        required: false
+        default: 'latest'
+  schedule:
+    - cron: '0 8 * * 1' # weekly, Monday 08:00 UTC
+
+jobs:
+  smoke-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: debian-13
+            image: debian:13
+          - name: fedora-44
+            image: fedora:44
+          - name: ubuntu-24.04
+            image: ubuntu:24.04
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - name: Install runtime deps + xvfb
+        run: |
+          if command -v apt-get >/dev/null; then
+            apt-get update
+            apt-get install -y curl tar xvfb libgl1 libegl1
+          elif command -v dnf >/dev/null; then
+            dnf install -y curl tar xorg-x11-server-Xvfb mesa-libGL mesa-libEGL
+          fi
+
+      - name: Download FontraPak-Ubuntu.tgz
+        run: |
+          VERSION="${{ github.event.inputs.fontra_pak_version || 'latest' }}"
+          if [ "$VERSION" = "latest" ]; then
+            URL="https://github.com/fontra/fontra-pak/releases/latest/download/FontraPak-Ubuntu.tgz"
+          else
+            URL="https://github.com/fontra/fontra-pak/releases/download/${VERSION}/FontraPak-Ubuntu.tgz"
+          fi
+          curl -L -o FontraPak-Ubuntu.tgz "$URL"
+          mkdir fontrapak && tar -xzf FontraPak-Ubuntu.tgz -C fontrapak
+
+      - name: Check glibc floor
+        run: |
+          # TODO: this greps the binary's dynamic symbol versions to report the
+          # highest GLIBC_x.y it links against - useful signal, not a substitute
+          # for actually launching the app in the "Launch under Xvfb" step below.
+          objdump -T fontrapak/fontrapak 2>/dev/null | grep -oP 'GLIBC_[0-9.]+' | sort -V | uniq | tail -5 || echo "objdump not available on ${{ matrix.name }}, skipping"
+
+      - name: Launch under Xvfb (headless smoke test)
+        run: |
+          # TODO: this only confirms the process starts and doesn't crash within
+          # a few seconds - it does not confirm the window/titlebar renders
+          # correctly. That part (#271) still needs a real desktop session,
+          # this can't catch it.
+          xvfb-run --auto-servernum ./fontrapak/fontrapak --version || \
+            xvfb-run --auto-servernum timeout 10 ./fontrapak/fontrapak

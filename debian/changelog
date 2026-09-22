@@ -1,0 +1,6 @@
+fontra-pak (2026.9.0-1) unstable; urgency=medium
+
+  * Initial repackaging of the official FontraPak-Ubuntu.tgz release
+    binary for local testing across Debian/Ubuntu.
+
+ -- Tarik <t4rik@users.noreply.github.com>  Tue, 22 Sep 2026 00:00:00 +0000

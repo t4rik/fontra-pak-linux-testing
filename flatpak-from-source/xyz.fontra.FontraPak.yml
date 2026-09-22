@@ -1,0 +1,54 @@
+id: xyz.fontra.FontraPak
+runtime: org.kde.Platform
+runtime-version: '6.7'
+sdk: org.kde.Sdk
+command: fontrapak
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+  - --filesystem=host
+
+modules:
+  # TODO: this is a skeleton, not a working build yet.
+  #
+  # fontra-pak's own requirements.txt pulls several deps straight from git
+  # (fontra, fontra-compile, fontra-rcjk, fontra-glyphs) plus PyQt6 from PyPI.
+  # Flatpak-builder needs each Python dependency as an explicit module with
+  # pinned sources (flatpak doesn't do arbitrary `pip install` at build time
+  # without network access, which is disabled during the actual build).
+  #
+  # Generate the PyPI-sourced deps with flatpak-pip-generator:
+  #   pip install flatpak-pip-generator   # or use flathub's shared-modules copy
+  #   flatpak-pip-generator --requirements-file=requirements.txt --output pip-deps
+  # then include the generated pip-deps.json here as its own module.
+  #
+  # The four git dependencies (fontra, fontra-compile, fontra-rcjk,
+  # fontra-glyphs) need their own `type: git` sources with a pinned `tag` or
+  # `commit` — using `branch: main` is an anti-pattern for reproducible
+  # flatpak builds and Flathub will reject it.
+  #
+  # Switched the base runtime here from org.freedesktop.Platform to
+  # org.kde.Platform since PyQt6 needs actual Qt6 libraries present at
+  # build/runtime, not just freedesktop's minimal set — untested assumption,
+  # verify before relying on it.
+
+  - name: fontrapak
+    buildsystem: simple
+    build-commands:
+      - echo "TODO: pip install --no-build-isolation --prefix=/app ." # placeholder
+    sources:
+      - type: git
+        url: https://github.com/fontra/fontra-pak.git
+        tag: 2026.9.0 # TODO: confirm this is the right ref, pin explicitly, don't track a branch
+      - type: file
+        path: ../data/icons/xyz.fontra.FontraPak.svg
+        dest-filename: xyz.fontra.FontraPak.svg
+      - type: file
+        path: ../xyz.fontra.FontraPak.desktop
+        dest-filename: xyz.fontra.FontraPak.desktop
+      - type: file
+        path: ../xyz.fontra.FontraPak.metainfo.xml

@@ -1,0 +1,9 @@
+FontraPak-Ubuntu.tgz
+stage/
+*.deb
+*.buildinfo
+*.changes
+debian/fontra-pak/
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files

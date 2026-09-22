@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	$(MAKE) stage VERSION=$(DEB_VERSION_UPSTREAM)
+
+override_dh_auto_install:
+	mkdir -p debian/fontra-pak/usr
+	cp -r stage/usr/lib debian/fontra-pak/usr/
+	cp -r stage/usr/bin debian/fontra-pak/usr/

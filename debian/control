@@ -1,0 +1,17 @@
+Source: fontra-pak
+Section: x11
+Priority: optional
+Maintainer: Tarik <t4rik@users.noreply.github.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/fontra/fontra-pak
+
+Package: fontra-pak
+Architecture: amd64
+Depends: ${misc:Depends}, libc6 (>= 2.39)
+Description: Standalone desktop application for the Fontra font editor
+ Fontra Pak bundles the Fontra font editor (https://github.com/fontra/fontra)
+ as a standalone desktop application. This package repackages the official
+ PyInstaller-built release tarball rather than rebuilding from source; the
+ libc6 dependency reflects the glibc floor of that upstream build (see
+ fontra/fontra-pak#276 for why it moved from 2.35 to 2.39).
