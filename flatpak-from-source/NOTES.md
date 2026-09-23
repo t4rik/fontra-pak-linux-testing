@@ -28,15 +28,29 @@ not yet re-verified.
 
 ## Still open
 
-1. **Second CI build attempt failed too, now fixed, not yet re-verified.** First attempt failed
-   on `python3-fonttools` (PEP 639 license metadata, see above) - fixed by adding
-   `python3-setuptools` as the first module. That fix's own build then failed differently:
-   `pip install --prefix=${FLATPAK_DEST}` still saw the SDK's existing system `setuptools` (at
-   `/usr/lib/python3.11/site-packages`, read-only in the SDK image) and tried to uninstall it
-   first - `OSError: [Errno 30] Read-only file system`. Added `--ignore-installed` to the
-   `python3-setuptools` module (tells pip to just install into `--prefix` without checking/
-   uninstalling what it sees elsewhere on `sys.path`), and defensively to the four git modules
-   too, since they hit the same install pattern. Not yet re-run to confirm.
+1. **Third CI build attempt failed too, now fixed, not yet re-verified.** First two fixed (PEP
+   639 license metadata needing a newer `setuptools`, then that fix's own install failing due to
+   the SDK's read-only system copy - see above). This one is different in kind: `python3-
+   watchfiles` failed with `BackendUnavailable: Cannot import 'maturin'`. `watchfiles` is
+   Rust-based, built via the `maturin` PEP 517 backend, and `flatpak_pip_generator`
+   systematically downloads **source** distributions rather than prebuilt wheels for every
+   compiled package (confirmed by the build log - `psutil`, `skia-pathops`, `pillow`, `fontc`,
+   `cffsubr`, `lxml` etc. all compiled from `.tar.gz` sources with plain `gcc`, consistent with
+   Flatpak/Flathub's general preference for building C extensions from source rather than
+   trusting prebuilt manylinux wheels). That's fine when the SDK has a C compiler; it isn't fine
+   for Rust, which the SDK doesn't include by default.
+   Two ways to fix this: add the `org.freedesktop.Sdk.Extension.rust-stable` SDK extension
+   properly (correct, but heavier - needs version-matching to the runtime's underlying
+   freedesktop base, PATH setup, and vendoring Rust crate sources since builds have no network
+   access, analogous to what `flatpak-pip-generator` does for pip but for `cargo`), or swap just
+   this one module to install from watchfiles' own prebuilt `cp310-abi3-manylinux_2_17_x86_64`
+   wheel instead of the sdist (confirmed this wheel exists and is ABI3, so it's compatible with
+   the SDK's Python 3.11). Went with the wheel swap - simpler, and avoids introducing a whole
+   Rust toolchain dependency for one package. Hand-patched `shared-modules-pip-deps.json`'s
+   `python3-watchfiles` entry to point at that wheel instead of the tarball. Not yet re-run to
+   confirm, and this file is generated, not maintained by hand - if `requirements.txt` changes
+   and this file gets regenerated, this patch will need reapplying (noted here so future-me
+   doesn't lose track of it).
 2. **`org.kde.Sdk`/`org.kde.Platform` 6.7 and `com.riverbankcomputing.PyQt.BaseApp` 6.7 are
    flagged end-of-life** in the CI build log ("Branch 6.7 of the PyQt base application is no
    longer supported. Please use 6.8 instead."). Building against an EOL runtime isn't a
