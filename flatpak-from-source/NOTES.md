@@ -28,16 +28,15 @@ not yet re-verified.
 
 ## Still open
 
-1. **First CI build attempt failed, now fixed, not yet re-verified.** `python3-fonttools`
-   failed building `unicodedata2`'s wheel: `configuration error: project.license must be valid
-   exactly by one definition`, because `unicodedata2` declares its license the PEP 639 way
-   (`license = "Apache-2.0"` as a plain string) and `org.kde.Sdk 6.7`'s bundled `setuptools` is
-   too old to parse that. Since every module here builds with `--no-build-isolation` (uses
-   whatever `setuptools` is already in `/app`, not a fresh one), added an explicit
-   `python3-setuptools` module (hand-pinned to 84.0.0, since `flatpak-pip-generator` refuses to
-   generate one for setuptools at all - "is in system_packages. Skipping.") as the *first*
-   module, so later ones pick up the newer version. Not yet re-run to confirm this actually
-   fixes it, or whether something else breaks next.
+1. **Second CI build attempt failed too, now fixed, not yet re-verified.** First attempt failed
+   on `python3-fonttools` (PEP 639 license metadata, see above) - fixed by adding
+   `python3-setuptools` as the first module. That fix's own build then failed differently:
+   `pip install --prefix=${FLATPAK_DEST}` still saw the SDK's existing system `setuptools` (at
+   `/usr/lib/python3.11/site-packages`, read-only in the SDK image) and tried to uninstall it
+   first - `OSError: [Errno 30] Read-only file system`. Added `--ignore-installed` to the
+   `python3-setuptools` module (tells pip to just install into `--prefix` without checking/
+   uninstalling what it sees elsewhere on `sys.path`), and defensively to the four git modules
+   too, since they hit the same install pattern. Not yet re-run to confirm.
 2. **`org.kde.Sdk`/`org.kde.Platform` 6.7 and `com.riverbankcomputing.PyQt.BaseApp` 6.7 are
    flagged end-of-life** in the CI build log ("Branch 6.7 of the PyQt base application is no
    longer supported. Please use 6.8 instead."). Building against an EOL runtime isn't a

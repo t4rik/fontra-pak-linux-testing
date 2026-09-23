@@ -37,7 +37,7 @@ modules:
   - name: python3-setuptools
     buildsystem: simple
     build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=${FLATPAK_DEST} "setuptools-84.0.0-py3-none-any.whl"
+      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=${FLATPAK_DEST} "setuptools-84.0.0-py3-none-any.whl"
     sources:
       - type: file
         url: https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl
@@ -73,7 +73,7 @@ modules:
   - name: fontra
     buildsystem: simple
     build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=${FLATPAK_DEST} .
+      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=${FLATPAK_DEST} .
     sources:
       - type: git
         url: https://github.com/fontra/fontra.git
@@ -82,7 +82,7 @@ modules:
   - name: fontra-compile
     buildsystem: simple
     build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=${FLATPAK_DEST} .
+      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=${FLATPAK_DEST} .
     sources:
       - type: git
         url: https://github.com/fontra/fontra-compile.git
@@ -91,7 +91,7 @@ modules:
   - name: fontra-rcjk
     buildsystem: simple
     build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=${FLATPAK_DEST} .
+      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=${FLATPAK_DEST} .
     sources:
       - type: git
         url: https://github.com/fontra/fontra-rcjk.git
@@ -100,7 +100,7 @@ modules:
   - name: fontra-glyphs
     buildsystem: simple
     build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=${FLATPAK_DEST} .
+      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=${FLATPAK_DEST} .
     sources:
       - type: git
         url: https://github.com/fontra/fontra-glyphs.git
