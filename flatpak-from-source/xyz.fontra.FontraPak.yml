@@ -22,6 +22,27 @@ finish-args:
 # bundled-Qt wheel.
 
 modules:
+  # flatpak_pip_generator refuses to emit a module for setuptools ("setuptools
+  # is in system_packages. Skipping.") on the assumption the SDK's own copy is
+  # adequate. It isn't: org.kde.Sdk 6.7's bundled setuptools is too old to
+  # parse PEP 639 SPDX-string `license = "Apache-2.0"` metadata, which several
+  # of fonttools' own dependencies (unicodedata2, at minimum) now use. Since
+  # every module below builds with --no-build-isolation - meaning it uses
+  # whatever setuptools is already in /app, not a fresh isolated one - this
+  # has to be upgraded first, before any module that needs it.
+  #
+  # Confirmed against an actual flatpak-builder run in CI: without this,
+  # python3-fonttools fails with "configuration error: `project.license` must
+  # be valid exactly by one definition" while building unicodedata2's wheel.
+  - name: python3-setuptools
+    buildsystem: simple
+    build-commands:
+      - pip3 install --no-build-isolation --no-deps --prefix=${FLATPAK_DEST} "setuptools-84.0.0-py3-none-any.whl"
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl
+        sha256: 51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670
+
   # Generated with:
   #   pip install flatpak-pip-generator
   #   flatpak_pip_generator --requirements-file=<(printf '%s\n' \
