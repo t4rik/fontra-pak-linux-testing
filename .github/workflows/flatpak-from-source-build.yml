@@ -1,0 +1,30 @@
+name: Build flatpak-from-source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'flatpak-from-source/**'
+      - '.github/workflows/flatpak-from-source-build.yml'
+
+jobs:
+  flatpak:
+    name: Build (kde-6.7)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.7
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: fontrapak-from-source.flatpak
+          manifest-path: flatpak-from-source/xyz.fontra.FontraPak.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+  # TODO once the build above succeeds: a follow-up job that installs the
+  # produced bundle and launches it under xvfb, same idea as
+  # .github/workflows/smoke-test.yml does for the tarball-repackaging path.
+  # No point writing that job until the build itself is confirmed working -
+  # see flatpak-from-source/NOTES.md "still open" item 1.

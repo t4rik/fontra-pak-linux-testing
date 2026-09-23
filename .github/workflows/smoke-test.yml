@@ -28,11 +28,27 @@ jobs:
     steps:
       - name: Install runtime deps + xvfb
         run: |
+          # Qt6's xcb platform plugin needs more than libgl/libegl to even
+          # start - missing libxkbcommon-x11 / libxcb-cursor / libdbus /
+          # fontconfig is a common cause of an immediate abort() (SIGABRT,
+          # exit 134) before the window ever shows. Installing the fuller
+          # set upfront rather than debugging one missing .so at a time.
           if command -v apt-get >/dev/null; then
             apt-get update
-            apt-get install -y curl tar xvfb libgl1 libegl1
+            apt-get install -y curl tar xvfb \
+              libgl1 libegl1 libopengl0 \
+              libxkbcommon0 libxkbcommon-x11-0 \
+              libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+              libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-shm0 \
+              libxcb-xfixes0 libxcb-xinerama0 libxcb1 libx11-xcb1 \
+              libdbus-1-3 libfontconfig1 libfreetype6 libglib2.0-0
           elif command -v dnf >/dev/null; then
-            dnf install -y curl tar xorg-x11-server-Xvfb mesa-libGL mesa-libEGL
+            dnf install -y curl tar xorg-x11-server-Xvfb \
+              mesa-libGL mesa-libEGL \
+              libxkbcommon libxkbcommon-x11 \
+              xcb-util-cursor xcb-util-wm xcb-util-image xcb-util-keysyms \
+              xcb-util-renderutil libxcb \
+              dbus-libs fontconfig freetype glib2
           fi
 
       - name: Download FontraPak-Ubuntu.tgz
@@ -59,5 +75,19 @@ jobs:
           # a few seconds - it does not confirm the window/titlebar renders
           # correctly. That part (#271) still needs a real desktop session,
           # this can't catch it.
-          xvfb-run --auto-servernum ./fontrapak/fontrapak --version || \
-            xvfb-run --auto-servernum timeout 10 ./fontrapak/fontrapak
+          #
+          # QT_DEBUG_PLUGINS surfaces *why* the xcb plugin failed to load
+          # (missing symbol, missing dependent .so, etc.) instead of just an
+          # opaque abort - important since the previous version of this step
+          # was silently swallowing that diagnostic via `|| fallback`.
+          export QT_DEBUG_PLUGINS=1
+          export QT_QPA_PLATFORM=xcb
+          xvfb-run --auto-servernum timeout 10 ./fontrapak/fontrapak; code=$?
+          # timeout returns 124 if it was still running (i.e. it launched and
+          # stayed up) - that's a pass for this smoke test, not a failure.
+          if [ "$code" -eq 124 ]; then
+            echo "Process launched and stayed running for 10s - OK"
+            exit 0
+          fi
+          echo "Process exited on its own with code $code - treating as failure"
+          exit "$code"
